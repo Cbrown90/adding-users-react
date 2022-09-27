@@ -1,40 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Button from "../UI/Button";
 
 const UserForm = (props) => {
-  const [enteredUsername, setEnteredUsername] = useState("");
-  const [enteredAge, setEnteredAge] = useState("");
+  const nameInputRef = useRef();
+  const ageInputRef = useRef();
 
-  const enteredUsernameHandler = (event) => {
-    setEnteredUsername(event.target.value);
-  };
-
-  const enteredAgeHandler = (event) => {
-    setEnteredAge(event.target.value);
-  };
+  // const [enteredUsername, setEnteredUsername] = useState("");
+  // const [enteredAge, setEnteredAge] = useState("");
 
   const submitHandler = (event) => {
     event.preventDefault();
     let userValid = true;
+    let nameValueFromRef = nameInputRef.current.value;
+    let ageValueFromRef = ageInputRef.current.value;
 
-    if (enteredUsername.trim().length === 0) {
+    if (nameValueFromRef.trim().length === 0) {
       props.onError("Username Invalid");
       userValid = false;
     };
-    if (!enteredAge.trim() > 0) {
+    if (!ageValueFromRef.trim() > 0) {
       props.onError("Age Invalid");
       userValid = false;
     };
 
     if (userValid) {
       const newUser = {
-        username: enteredUsername,
-        age: +enteredAge,
+        username: nameValueFromRef,
+        age: +ageValueFromRef,
       };
 
       props.onSaveNewUser(newUser);
-      setEnteredUsername("");
-      setEnteredAge("");
+      nameInputRef.current.value = "";
+      ageInputRef.current.value = "";
     };
   };
 
@@ -43,9 +40,8 @@ const UserForm = (props) => {
       <label htmlFor="username"> Username </label>
       <input
         id="username"
-        type="text"
-        value={enteredUsername}
-        onChange={enteredUsernameHandler}
+        type="text"        
+        ref ={nameInputRef}
       />
       <label htmlFor="age"> Ages (years) </label>
       <input
@@ -53,8 +49,7 @@ const UserForm = (props) => {
         type="number"
         min="1"
         step="1"
-        value={enteredAge}
-        onChange={enteredAgeHandler}
+        ref ={ageInputRef}
       />
       <Button type="submit">Add User</Button>
     </form>
